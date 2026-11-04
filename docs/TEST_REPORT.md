@@ -8,16 +8,40 @@
 
 ## Summary
 
-| Phase | Unit Tests | E2E Tests | Type Check | Lint | Build |
-|-------|-----------|-----------|------------|------|-------|
-| 00 (Docs) | N/A | N/A | N/A | N/A | N/A |
-| 01 (Scaffold) | 1/1 passed (smoke) | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
-| 02 (Supabase) | 36/36 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
-| 03 (Auth Complete) | 90/90 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
+| Phase | Unit Tests | Live Integration Tests | Type Check | Lint | Build | Status |
+|-------|-----------|------------------------|------------|------|-------|--------|
+| 00 (Docs) | N/A | N/A | N/A | N/A | N/A | Pass |
+| 01 (Scaffold) | 1/1 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) | Pass |
+| 02 (Supabase) | 25/25 passed (syntax) | Storage Bucket Verified (20MB) | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) | Tables Pending in SQL Editor |
+| 03 (Auth Complete) | 95/95 passed | 5/5 live passed | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) | Code Ready / DB Tables Pending |
 
 ---
 
 ## Test Run History
+
+### 2026-11-04 — Real Supabase Authentication Integration Audit & Remediation
+- `npm run test:run`: **100 tests passed** across 12 test files:
+  - **Live Cloud Integration**: `tests/integration/supabase-auth.integration.test.ts` (5 tests running against remote Supabase project `wzvllcifkdfnvnvsqdqr`):
+    - [LIVE] Connection to remote Supabase Auth service: **PASS**
+    - [LIVE] Signup requires email confirmation (session null, confirmation sent): **PASS**
+    - [LIVE] Unconfirmed user cannot sign in with password: **PASS** (Supabase returns `Email not confirmed`)
+    - [LIVE] Confirmed user can sign in, validate token, and sign out: **PASS**
+    - [LIVE] PostgREST schema cache check: **PASS (AUDIT EVIDENCE)** (Returns `PGRST205` confirming SQL migration needs to be executed in Supabase SQL Editor)
+  - **Unit Tests (Mocked)**:
+    - `tests/unit/auth/login-form.test.tsx` (9 tests)
+    - `tests/unit/auth/signup-form.test.tsx` (8 tests)
+    - `tests/unit/auth/logout.test.ts` (3 tests)
+    - `tests/unit/auth/validation.test.ts` (11 tests)
+    - `tests/unit/auth/proxy.test.ts` (8 tests)
+    - `tests/unit/auth/callback.test.ts` (5 tests)
+    - `tests/unit/auth/session.test.ts` (8 tests)
+    - `tests/unit/auth/redirect.test.ts` (7 tests)
+    - `tests/unit/supabase/client.test.ts` (10 tests)
+    - `tests/unit/supabase/migrations.test.ts` (25 tests)
+    - `tests/unit/smoke.test.ts` (1 test)
+- `npm run type-check`: Passed (`tsc --noEmit` with 0 errors)
+- `npm run lint`: Passed (`eslint` passed with 0 errors and 0 warnings)
+- `npm run build`: Passed (Turbopack compilation succeeded with `/api/auth/logout`, `/auth/callback`, `/login`, `/signup`, and `Proxy`)
 
 ### 2026-11-04 — Phase 03 (P03-T02) Login & Signup Pages
 - `npm run test:run`: 90 passed across 10 test files:

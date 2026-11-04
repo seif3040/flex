@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
   getServerUser,
+  getServerSession,
   requireServerUser,
   createUnauthorizedResponse,
   UnauthorizedError,
@@ -61,6 +62,36 @@ describe('Server Authentication Helpers (session.ts)', () => {
 
       const user = await getServerUser();
       expect(user).toBeNull();
+    });
+  });
+
+  describe('getServerSession (P03-T03 Contract)', () => {
+    it('delegates to getServerUser and returns user when authenticated', async () => {
+      vi.mocked(serverSupabase.createClient).mockResolvedValue({
+        auth: {
+          getUser: vi.fn().mockResolvedValue({
+            data: { user: mockUser },
+            error: null,
+          }),
+        },
+      } as unknown as Awaited<ReturnType<typeof serverSupabase.createClient>>);
+
+      const session = await getServerSession();
+      expect(session).toEqual(mockUser);
+    });
+
+    it('returns null when unauthenticated', async () => {
+      vi.mocked(serverSupabase.createClient).mockResolvedValue({
+        auth: {
+          getUser: vi.fn().mockResolvedValue({
+            data: { user: null },
+            error: null,
+          }),
+        },
+      } as unknown as Awaited<ReturnType<typeof serverSupabase.createClient>>);
+
+      const session = await getServerSession();
+      expect(session).toBeNull();
     });
   });
 

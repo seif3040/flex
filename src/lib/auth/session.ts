@@ -34,6 +34,14 @@ export async function getServerUser(): Promise<User | null> {
 }
 
 /**
+ * Retrieves the currently authenticated Supabase user on the server.
+ * Alias for getServerUser fulfilling the docs/IMPLEMENTATION_PLAN.md P03-T03 specification.
+ */
+export async function getServerSession(): Promise<User | null> {
+  return getServerUser();
+}
+
+/**
  * Asserts that a user is authenticated on the server.
  * Throws an UnauthorizedError if no authenticated user is present.
  */

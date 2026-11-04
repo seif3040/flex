@@ -24,9 +24,9 @@
 |-------|-------------|--------|-------|
 | 00 | Documentation & Planning | ✅ | Completed 2026-11-04 |
 | 01 | Project Scaffold & Configuration | ✅ | Completed 2026-11-04 (Next.js 16, Tailwind v4, shadcn, Vitest, Playwright, Strict TS) |
-| 02 | Supabase Setup & Database Schema | ✅ | Completed 2026-11-04 (All 8 tables, indexes, RLS, storage bucket, triggers verified) |
-| 03 | Authentication | ✅ | Completed 2026-11-04 (P03-T01 Proxy guard & callback, P03-T02 Login/Signup UI, P03-T03 Session utilities) |
-| 04 | Dashboard Shell & Sidebar | ⏳ | Ready to start (P04-T01 Root Layout with Theme Provider) |
+| 02 | Supabase Setup & Database Schema | ⚠️ | Partial — Schema files authored & bucket verified, but SQL migration pending execution in Supabase SQL Editor |
+| 03 | Authentication | ⚠️ | Code complete & Auth API verified live, but Database RLS test BLOCKED by pending SQL migration |
+| 04 | Dashboard Shell & Sidebar | ❌ | Blocked: Apply supabase/full_schema.sql in Supabase Dashboard first |
 | 05 | API Key Management | ❌ | Blocked: needs Phase 04 & KEY_ENCRYPTION_SECRET |
 | 06 | OpenRouter Model Listing | ❌ | Blocked: needs Phase 05 |
 | 07 | Core Chat (New Conv + Streaming) | ❌ | Blocked: needs Phase 06 |
@@ -50,7 +50,7 @@
 
 | Blocker | Needed For | Resolution |
 |---------|-----------|------------|
-| Supabase project credentials | Phase 02 | See EXTERNAL_CONFIG.md § 2.1 |
+| Run `supabase/full_schema.sql` in Supabase SQL Editor | Database Tables & RLS | Paste contents of `supabase/full_schema.sql` into remote project `wzvllcifkdfnvnvsqdqr` SQL Editor and run |
 | `KEY_ENCRYPTION_SECRET` env var | Phase 05 | Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | Personal OpenRouter API key (for testing) | Phase 06 (dev test) | Enter through app Settings UI after Phase 05 |
 | Web search provider decision | Phase 13 | See OPEN_QUESTIONS.md Q-003 |
@@ -100,6 +100,17 @@
   - Created `src/lib/supabase/proxy.ts` implementing `updateSession` for Next.js 16 `proxy.ts`.
   - Added unit test suite `tests/unit/supabase/client.test.ts` (10 passing tests).
   - Verified full test suite: 11/11 tests pass, `npm run type-check` passes (0 errors), `npm run lint` passes (0 errors/warnings), `npm run build` compiles cleanly.
+
+### 2026-11-04 — Supabase Authentication Integration Audit & Remediation
+
+**Audit Findings & Remediations**:
+- **Live Supabase Auth API**: Verified connected (`https://wzvllcifkdfnvnvsqdqr.supabase.co`).
+- **Email Confirmation**: Confirmed actively enforced on remote Supabase project. New `signUp` calls do NOT return an active session; user receives confirmation email (`confirmation_sent_at` timestamp recorded). Unconfirmed users cannot log in (returns `Email not confirmed`).
+- **Confirmed User Flow**: Verified live via Admin API creation + `signInWithPassword` using public anon key. Returns valid JWT access token and refresh token. User validation via `auth.getUser(token)` succeeds.
+- **Defect Fixed (Missing Logout)**: Logout functionality was completely missing from the codebase. Implemented `src/app/api/auth/logout/route.ts` (POST/GET handlers clearing cookies and redirecting to `/login`) and `src/lib/auth/logout.ts` (`signOut()` client utility). Updated `src/proxy.ts` to include `/api/auth/logout` in public routes. Added unit tests in `tests/unit/auth/logout.test.ts`.
+- **Defect Fixed (Missing `getServerSession`)**: Added explicit `getServerSession` alias in `src/lib/auth/session.ts` to fulfill the `IMPLEMENTATION_PLAN.md` P03-T03 contract.
+- **Live Integration Test Suite**: Created `tests/integration/supabase-auth.integration.test.ts` running 5 live cloud assertions against remote Supabase project with automated user cleanup.
+- **Database Schema Finding**: Application tables (`profiles`, `conversations`, etc.) are not yet present in the remote PostgreSQL database (PostgREST returns `PGRST205`). Storage bucket `user-uploads` is live and verified. Application tables require running `supabase/full_schema.sql` in the Supabase Dashboard SQL editor.
 
 ### 2026-11-04 — Phase 03: P03-T02 (Login & Signup Pages)
 

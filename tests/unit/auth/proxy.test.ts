@@ -30,8 +30,8 @@ describe('Next.js 16 Proxy Auth Guard (proxy.ts)', () => {
       });
     });
 
-    it('allows access to public pages (/login, /signup, /auth/callback)', async () => {
-      for (const path of ['/login', '/signup', '/auth/callback']) {
+    it('allows access to public pages and endpoints (/login, /signup, /auth/callback, /api/auth/logout)', async () => {
+      for (const path of ['/login', '/signup', '/auth/callback', '/api/auth/logout']) {
         const req = new NextRequest(`http://localhost:3000${path}`);
         const res = await proxy(req);
         // NextResponse.next() returns a response without 307 redirect

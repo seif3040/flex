@@ -3,7 +3,7 @@ import { updateSession } from '@/lib/supabase/proxy';
 import { sanitizeRedirectUrl } from '@/lib/auth/redirect';
 
 // Routes that can be accessed without an authenticated session
-const PUBLIC_PATHS = ['/login', '/signup', '/auth/callback'];
+const PUBLIC_PATHS = ['/login', '/signup', '/auth/callback', '/api/auth/logout'];
 
 /**
  * Next.js 16 Proxy entry point.

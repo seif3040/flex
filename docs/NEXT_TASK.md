@@ -6,13 +6,32 @@
 
 ---
 
+## Current Status: Supabase Auth Audit Completed & Defect Remediated
+
+**Phase**: 03 — Authentication  
+**Status**: Code Ready / Remote Database Schema Execution Pending
+
+---
+
+### External Action Required Before Database Table Operations
+
+The Authentication service and Private Storage bucket (`user-uploads`) are 100% operational on remote Supabase project `wzvllcifkdfnvnvsqdqr`.
+However, remote PostgreSQL application tables (`profiles`, `conversations`, `messages`, etc.) must be created:
+
+1. Open the [Supabase Dashboard](https://supabase.com/dashboard/project/wzvllcifkdfnvnvsqdqr).
+2. Navigate to the **SQL Editor**.
+3. Copy the entire contents of [`supabase/full_schema.sql`](file:///d:/flex/supabase/full_schema.sql).
+4. Paste and click **Run**.
+
+Once executed, PostgREST will immediately expose all 8 tables and enable default-deny RLS.
+
+---
+
 ## Authorized Next Task: P04-T01 — Root Layout with Theme Provider
 
 **Phase**: 04 — Dashboard Shell & Sidebar Layout  
 **Task ID**: P04-T01  
 **Depends on**: Phase 03 completed ✅
-
----
 
 ### What This Task Does
 
