@@ -35,18 +35,21 @@ ALTER TABLE public.memory_entries FORCE ROW LEVEL SECURITY;
 -- ------------------------------------------------------------------------------
 -- 2. profiles Policies (one-to-one with auth.users)
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;
 CREATE POLICY "profiles_select_own"
   ON public.profiles
   FOR SELECT
   TO authenticated
   USING (id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "profiles_insert_own" ON public.profiles;
 CREATE POLICY "profiles_insert_own"
   ON public.profiles
   FOR INSERT
   TO authenticated
   WITH CHECK (id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "profiles_update_own" ON public.profiles;
 CREATE POLICY "profiles_update_own"
   ON public.profiles
   FOR UPDATE
@@ -54,6 +57,7 @@ CREATE POLICY "profiles_update_own"
   USING (id = (SELECT auth.uid()))
   WITH CHECK (id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "profiles_delete_own" ON public.profiles;
 CREATE POLICY "profiles_delete_own"
   ON public.profiles
   FOR DELETE
@@ -63,18 +67,21 @@ CREATE POLICY "profiles_delete_own"
 -- ------------------------------------------------------------------------------
 -- 3. api_keys Policies
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "api_keys_select_own" ON public.api_keys;
 CREATE POLICY "api_keys_select_own"
   ON public.api_keys
   FOR SELECT
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "api_keys_insert_own" ON public.api_keys;
 CREATE POLICY "api_keys_insert_own"
   ON public.api_keys
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "api_keys_update_own" ON public.api_keys;
 CREATE POLICY "api_keys_update_own"
   ON public.api_keys
   FOR UPDATE
@@ -82,6 +89,7 @@ CREATE POLICY "api_keys_update_own"
   USING (user_id = (SELECT auth.uid()))
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "api_keys_delete_own" ON public.api_keys;
 CREATE POLICY "api_keys_delete_own"
   ON public.api_keys
   FOR DELETE
@@ -91,18 +99,21 @@ CREATE POLICY "api_keys_delete_own"
 -- ------------------------------------------------------------------------------
 -- 4. projects Policies
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "projects_select_own" ON public.projects;
 CREATE POLICY "projects_select_own"
   ON public.projects
   FOR SELECT
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "projects_insert_own" ON public.projects;
 CREATE POLICY "projects_insert_own"
   ON public.projects
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "projects_update_own" ON public.projects;
 CREATE POLICY "projects_update_own"
   ON public.projects
   FOR UPDATE
@@ -110,6 +121,7 @@ CREATE POLICY "projects_update_own"
   USING (user_id = (SELECT auth.uid()))
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "projects_delete_own" ON public.projects;
 CREATE POLICY "projects_delete_own"
   ON public.projects
   FOR DELETE
@@ -119,18 +131,21 @@ CREATE POLICY "projects_delete_own"
 -- ------------------------------------------------------------------------------
 -- 5. conversations Policies
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "conversations_select_own" ON public.conversations;
 CREATE POLICY "conversations_select_own"
   ON public.conversations
   FOR SELECT
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "conversations_insert_own" ON public.conversations;
 CREATE POLICY "conversations_insert_own"
   ON public.conversations
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "conversations_update_own" ON public.conversations;
 CREATE POLICY "conversations_update_own"
   ON public.conversations
   FOR UPDATE
@@ -138,6 +153,7 @@ CREATE POLICY "conversations_update_own"
   USING (user_id = (SELECT auth.uid()))
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "conversations_delete_own" ON public.conversations;
 CREATE POLICY "conversations_delete_own"
   ON public.conversations
   FOR DELETE
@@ -147,6 +163,7 @@ CREATE POLICY "conversations_delete_own"
 -- ------------------------------------------------------------------------------
 -- 6. messages Policies (Joined conversation ownership)
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "messages_select_own" ON public.messages;
 CREATE POLICY "messages_select_own"
   ON public.messages
   FOR SELECT
@@ -160,6 +177,7 @@ CREATE POLICY "messages_select_own"
     )
   );
 
+DROP POLICY IF EXISTS "messages_insert_own" ON public.messages;
 CREATE POLICY "messages_insert_own"
   ON public.messages
   FOR INSERT
@@ -173,6 +191,7 @@ CREATE POLICY "messages_insert_own"
     )
   );
 
+DROP POLICY IF EXISTS "messages_update_own" ON public.messages;
 CREATE POLICY "messages_update_own"
   ON public.messages
   FOR UPDATE
@@ -194,6 +213,7 @@ CREATE POLICY "messages_update_own"
     )
   );
 
+DROP POLICY IF EXISTS "messages_delete_own" ON public.messages;
 CREATE POLICY "messages_delete_own"
   ON public.messages
   FOR DELETE
@@ -210,6 +230,7 @@ CREATE POLICY "messages_delete_own"
 -- ------------------------------------------------------------------------------
 -- 7. files Policies (Direct ownership + optional conversation relationship check)
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "files_select_own" ON public.files;
 CREATE POLICY "files_select_own"
   ON public.files
   FOR SELECT
@@ -226,6 +247,7 @@ CREATE POLICY "files_select_own"
     )
   );
 
+DROP POLICY IF EXISTS "files_insert_own" ON public.files;
 CREATE POLICY "files_insert_own"
   ON public.files
   FOR INSERT
@@ -242,6 +264,7 @@ CREATE POLICY "files_insert_own"
     )
   );
 
+DROP POLICY IF EXISTS "files_update_own" ON public.files;
 CREATE POLICY "files_update_own"
   ON public.files
   FOR UPDATE
@@ -269,6 +292,7 @@ CREATE POLICY "files_update_own"
     )
   );
 
+DROP POLICY IF EXISTS "files_delete_own" ON public.files;
 CREATE POLICY "files_delete_own"
   ON public.files
   FOR DELETE
@@ -288,6 +312,7 @@ CREATE POLICY "files_delete_own"
 -- ------------------------------------------------------------------------------
 -- 8. artifacts Policies (Joined conversation ownership)
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "artifacts_select_own" ON public.artifacts;
 CREATE POLICY "artifacts_select_own"
   ON public.artifacts
   FOR SELECT
@@ -301,6 +326,7 @@ CREATE POLICY "artifacts_select_own"
     )
   );
 
+DROP POLICY IF EXISTS "artifacts_insert_own" ON public.artifacts;
 CREATE POLICY "artifacts_insert_own"
   ON public.artifacts
   FOR INSERT
@@ -314,6 +340,7 @@ CREATE POLICY "artifacts_insert_own"
     )
   );
 
+DROP POLICY IF EXISTS "artifacts_update_own" ON public.artifacts;
 CREATE POLICY "artifacts_update_own"
   ON public.artifacts
   FOR UPDATE
@@ -335,6 +362,7 @@ CREATE POLICY "artifacts_update_own"
     )
   );
 
+DROP POLICY IF EXISTS "artifacts_delete_own" ON public.artifacts;
 CREATE POLICY "artifacts_delete_own"
   ON public.artifacts
   FOR DELETE
@@ -351,18 +379,21 @@ CREATE POLICY "artifacts_delete_own"
 -- ------------------------------------------------------------------------------
 -- 9. memory_entries Policies
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "memory_entries_select_own" ON public.memory_entries;
 CREATE POLICY "memory_entries_select_own"
   ON public.memory_entries
   FOR SELECT
   TO authenticated
   USING (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "memory_entries_insert_own" ON public.memory_entries;
 CREATE POLICY "memory_entries_insert_own"
   ON public.memory_entries
   FOR INSERT
   TO authenticated
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "memory_entries_update_own" ON public.memory_entries;
 CREATE POLICY "memory_entries_update_own"
   ON public.memory_entries
   FOR UPDATE
@@ -370,6 +401,7 @@ CREATE POLICY "memory_entries_update_own"
   USING (user_id = (SELECT auth.uid()))
   WITH CHECK (user_id = (SELECT auth.uid()));
 
+DROP POLICY IF EXISTS "memory_entries_delete_own" ON public.memory_entries;
 CREATE POLICY "memory_entries_delete_own"
   ON public.memory_entries
   FOR DELETE

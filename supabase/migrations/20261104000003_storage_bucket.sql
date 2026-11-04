@@ -42,6 +42,7 @@ ON CONFLICT (id) DO UPDATE SET
 -- Path convention: user-uploads/{user_id}/{conversation_id}/{filename}
 -- Authenticated users can only read/write objects under their own user_id folder
 -- ------------------------------------------------------------------------------
+DROP POLICY IF EXISTS "user_uploads_select" ON storage.objects;
 CREATE POLICY "user_uploads_select"
   ON storage.objects
   FOR SELECT
@@ -51,6 +52,7 @@ CREATE POLICY "user_uploads_select"
     AND (storage.foldername(name))[1] = (SELECT auth.uid())::text
   );
 
+DROP POLICY IF EXISTS "user_uploads_insert" ON storage.objects;
 CREATE POLICY "user_uploads_insert"
   ON storage.objects
   FOR INSERT
@@ -60,6 +62,7 @@ CREATE POLICY "user_uploads_insert"
     AND (storage.foldername(name))[1] = (SELECT auth.uid())::text
   );
 
+DROP POLICY IF EXISTS "user_uploads_update" ON storage.objects;
 CREATE POLICY "user_uploads_update"
   ON storage.objects
   FOR UPDATE
@@ -73,6 +76,7 @@ CREATE POLICY "user_uploads_update"
     AND (storage.foldername(name))[1] = (SELECT auth.uid())::text
   );
 
+DROP POLICY IF EXISTS "user_uploads_delete" ON storage.objects;
 CREATE POLICY "user_uploads_delete"
   ON storage.objects
   FOR DELETE

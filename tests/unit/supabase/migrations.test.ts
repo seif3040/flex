@@ -79,6 +79,13 @@ describe('Supabase Database Migrations (P02-T02)', () => {
       expect(sql).not.toContain('auth.role()');
     });
 
+    it('enforces idempotency with DROP POLICY IF EXISTS before CREATE POLICY', () => {
+      expect(sql).toContain('DROP POLICY IF EXISTS "profiles_select_own" ON public.profiles;');
+      expect(sql).toContain('DROP POLICY IF EXISTS "api_keys_select_own" ON public.api_keys;');
+      expect(sql).toContain('DROP POLICY IF EXISTS "conversations_select_own" ON public.conversations;');
+      expect(sql).toContain('DROP POLICY IF EXISTS "messages_select_own" ON public.messages;');
+    });
+
     it('enforces joined ownership on messages and artifacts', () => {
       expect(sql).toContain('EXISTS (\n      SELECT 1 FROM public.conversations c\n      WHERE c.id = messages.conversation_id');
       expect(sql).toContain('EXISTS (\n      SELECT 1 FROM public.conversations c\n      WHERE c.id = artifacts.conversation_id');
@@ -120,6 +127,24 @@ describe('Supabase Database Migrations (P02-T02)', () => {
       expect(sql).toContain('FUNCTION public.handle_updated_at()');
       expect(sql).toContain('trg_profiles_updated_at');
       expect(sql).toContain('trg_conversations_updated_at');
+    });
+  });
+
+  describe('supabase/full_schema.sql', () => {
+    const fullSchemaPath = path.resolve(process.cwd(), 'supabase/full_schema.sql');
+
+    it('exists and matches exact concatenation of migration files', () => {
+      expect(fs.existsSync(fullSchemaPath)).toBe(true);
+      const fullSql = fs.readFileSync(fullSchemaPath, 'utf8');
+
+      const expectedFull = [
+        fs.readFileSync(files.initialSchema, 'utf8').trim(),
+        fs.readFileSync(files.rlsPolicies, 'utf8').trim(),
+        fs.readFileSync(files.storageBucket, 'utf8').trim(),
+        fs.readFileSync(files.triggers, 'utf8').trim(),
+      ].join('\n\n') + '\n';
+
+      expect(fullSql).toBe(expectedFull);
     });
   });
 });

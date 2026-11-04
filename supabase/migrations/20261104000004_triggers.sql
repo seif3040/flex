@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public, auth
+SET search_path = public, auth, pg_temp
 AS $$
 BEGIN
   INSERT INTO public.profiles (id, display_name, avatar_url)
@@ -48,7 +48,7 @@ CREATE OR REPLACE FUNCTION public.handle_updated_at()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY INVOKER
-SET search_path = public
+SET search_path = public, pg_temp
 AS $$
 BEGIN
   NEW.updated_at = now();
