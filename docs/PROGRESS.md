@@ -25,9 +25,9 @@
 | 00 | Documentation & Planning | ✅ | Completed 2026-11-04 |
 | 01 | Project Scaffold & Configuration | ✅ | Completed 2026-11-04 (Next.js 16, Tailwind v4, shadcn, Vitest, Playwright, Strict TS) |
 | 02 | Supabase Setup & Database Schema | ✅ | Completed 2026-11-04 (All 8 tables, indexes, RLS, storage bucket, triggers verified) |
-| 03 | Authentication | 🔄 | In progress (P03-T01 Proxy route guard & auth callback completed) |
-| 04 | Dashboard Shell & Sidebar | ❌ | Blocked: needs Phase 03 |
-| 05 | API Key Management | ❌ | Blocked: needs Phase 02 & KEY_ENCRYPTION_SECRET |
+| 03 | Authentication | ✅ | Completed 2026-11-04 (P03-T01 Proxy guard & callback, P03-T02 Login/Signup UI, P03-T03 Session utilities) |
+| 04 | Dashboard Shell & Sidebar | ⏳ | Ready to start (P04-T01 Root Layout with Theme Provider) |
+| 05 | API Key Management | ❌ | Blocked: needs Phase 04 & KEY_ENCRYPTION_SECRET |
 | 06 | OpenRouter Model Listing | ❌ | Blocked: needs Phase 05 |
 | 07 | Core Chat (New Conv + Streaming) | ❌ | Blocked: needs Phase 06 |
 | 08 | Conversation History | ❌ | Blocked: needs Phase 07 |
@@ -100,6 +100,22 @@
   - Created `src/lib/supabase/proxy.ts` implementing `updateSession` for Next.js 16 `proxy.ts`.
   - Added unit test suite `tests/unit/supabase/client.test.ts` (10 passing tests).
   - Verified full test suite: 11/11 tests pass, `npm run type-check` passes (0 errors), `npm run lint` passes (0 errors/warnings), `npm run build` compiles cleanly.
+
+### 2026-11-04 — Phase 03: P03-T02 (Login & Signup Pages)
+
+**Completed Tasks**:
+- `P03-T02`:
+  - Created `src/lib/validation/auth.ts` with strict Zod validation schemas (`loginSchema` and `signupSchema`) enforcing email formatting, password complexity (min 8 chars, uppercase, lowercase, number), and password confirmation matching.
+  - Installed and configured `src/components/ui/card.tsx` via shadcn/ui.
+  - Created `src/components/auth/login-form.tsx` featuring accessible form inputs, show/hide password toggle, loading spinner, duplicate submission prevention, user-friendly error messages (invalid credentials, unconfirmed email), and safe redirect handling with `sanitizeRedirectUrl`.
+  - Created `src/components/auth/signup-form.tsx` featuring full name, email, password, confirm password, dual show/hide toggles, strong password validation, duplicate submission protection, and comprehensive email verification instructions screen for Supabase unconfirmed email flow.
+  - Created accessible page routes `src/app/login/page.tsx` and `src/app/signup/page.tsx` with responsive layout, brand header ("AI Workspace"), and React Suspense boundaries for search parameter safety.
+  - Configured `@testing-library/jest-dom/vitest` types in `tsconfig.json` and `vitest.setup.ts`.
+  - Created comprehensive unit tests:
+    - `tests/unit/auth/validation.test.ts` (11 tests) verifying schema rules and edge cases.
+    - `tests/unit/auth/login-form.test.tsx` (9 tests) testing rendering, validation, password toggle, invalid credentials, unconfirmed email, safe redirect, and url error propagation.
+    - `tests/unit/auth/signup-form.test.tsx` (8 tests) testing rendering, password confirmation mismatch, password complexity, duplicate email, email verification flow, and immediate session redirect.
+  - Full verification suite: 90/90 tests passing, 0 TypeScript errors (`tsc --noEmit`), 0 ESLint warnings, production build successful with `/login`, `/signup`, `/auth/callback`, and `Proxy (Middleware)`.
 
 ### 2026-11-04 — Phase 03: P03-T01 (Authentication Foundation)
 

@@ -13,11 +13,27 @@
 | 00 (Docs) | N/A | N/A | N/A | N/A | N/A |
 | 01 (Scaffold) | 1/1 passed (smoke) | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
 | 02 (Supabase) | 36/36 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
-| 03 (Auth P03-T01) | 62/62 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
+| 03 (Auth Complete) | 90/90 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
 
 ---
 
 ## Test Run History
+
+### 2026-11-04 — Phase 03 (P03-T02) Login & Signup Pages
+- `npm run test:run`: 90 passed across 10 test files:
+  - `tests/unit/auth/login-form.test.tsx` (9 tests)
+  - `tests/unit/auth/signup-form.test.tsx` (8 tests)
+  - `tests/unit/auth/validation.test.ts` (11 tests)
+  - `tests/unit/auth/proxy.test.ts` (8 tests)
+  - `tests/unit/auth/callback.test.ts` (5 tests)
+  - `tests/unit/auth/session.test.ts` (6 tests)
+  - `tests/unit/auth/redirect.test.ts` (7 tests)
+  - `tests/unit/supabase/client.test.ts` (10 tests)
+  - `tests/unit/supabase/migrations.test.ts` (25 tests)
+  - `tests/unit/smoke.test.ts` (1 test)
+- `npm run type-check`: Passed (`tsc --noEmit` with 0 errors)
+- `npm run lint`: Passed (`eslint` passed with 0 errors and 0 warnings)
+- `npm run build`: Passed (Next.js 16.4.5 Turbopack compilation succeeded with static `/login`, `/signup`, dynamic `/auth/callback`, and `Proxy (Middleware)`)
 
 ### 2026-11-04 — Phase 03 (P03-T01) Authentication Foundation
 - `npm run test:run`: 62 passed across 7 test files:
