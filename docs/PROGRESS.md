@@ -25,7 +25,7 @@
 | 00 | Documentation & Planning | ✅ | Completed 2026-11-04 |
 | 01 | Project Scaffold & Configuration | ✅ | Completed 2026-11-04 (Next.js 16, Tailwind v4, shadcn, Vitest, Playwright, Strict TS) |
 | 02 | Supabase Setup & Database Schema | ✅ | Completed 2026-11-04 (All 8 tables, indexes, RLS, storage bucket, triggers verified) |
-| 03 | Authentication | ⏳ | Ready to start (P03-T01 Next.js 16 proxy route guard & auth callback) |
+| 03 | Authentication | 🔄 | In progress (P03-T01 Proxy route guard & auth callback completed) |
 | 04 | Dashboard Shell & Sidebar | ❌ | Blocked: needs Phase 03 |
 | 05 | API Key Management | ❌ | Blocked: needs Phase 02 & KEY_ENCRYPTION_SECRET |
 | 06 | OpenRouter Model Listing | ❌ | Blocked: needs Phase 05 |
@@ -100,6 +100,17 @@
   - Created `src/lib/supabase/proxy.ts` implementing `updateSession` for Next.js 16 `proxy.ts`.
   - Added unit test suite `tests/unit/supabase/client.test.ts` (10 passing tests).
   - Verified full test suite: 11/11 tests pass, `npm run type-check` passes (0 errors), `npm run lint` passes (0 errors/warnings), `npm run build` compiles cleanly.
+
+### 2026-11-04 — Phase 03: P03-T01 (Authentication Foundation)
+
+**Completed Tasks**:
+- `P03-T01`:
+  - Created `src/lib/auth/redirect.ts` with comprehensive Open Redirect prevention (`sanitizeRedirectUrl`) disallowing protocol-relative URLs (`//evil.com`), backslash bypasses (`/\evil.com`), dangerous schemes (`javascript:`, `data:`), and control characters.
+  - Created `src/lib/auth/session.ts` with `getServerUser()`, `requireServerUser()`, `createUnauthorizedResponse()`, and `UnauthorizedError` for secure server-side user context validation.
+  - Created `src/app/auth/callback/route.ts` Next.js Route Handler for handling PKCE code exchange (`exchangeCodeForSession(code)`), Supabase auth error handling, and sanitized destination redirect.
+  - Created `src/proxy.ts` (Next.js 16 Proxy convention) with session cookie refresh (`updateSession`), public path passthrough (`/login`, `/signup`, `/auth/callback`), API 401 returns, unauthenticated route redirection preserving safe `next` param, and redirecting authenticated users away from auth pages.
+  - Created unit tests in `tests/unit/auth/redirect.test.ts` (7 tests), `tests/unit/auth/session.test.ts` (6 tests), `tests/unit/auth/callback.test.ts` (5 tests), and `tests/unit/auth/proxy.test.ts` (8 tests).
+  - Verified full test suite: 62/62 tests passing, 0 TypeScript errors, 0 ESLint warnings, production build successful with dynamic `/auth/callback` and `Proxy (Middleware)` recognized.
 
 ### 2026-11-04 — Phase 02: P02-T02 (Database Migrations, Storage & Schema Verification)
 

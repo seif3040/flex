@@ -6,41 +6,49 @@
 
 ---
 
-## Authorized Next Task: P03-T01 — Next.js 16 Proxy Route Guard & Auth Callback
+## Authorized Next Task: P03-T02 — Login & Signup Pages
 
 **Phase**: 03 — Authentication  
-**Task ID**: P03-T01  
-**Depends on**: Phase 02 completed ✅, Supabase live connection verified ✅
+**Task ID**: P03-T02  
+**Depends on**: Phase 02 completed ✅, P03-T01 completed ✅
 
 ---
 
 ### What This Task Does
 
-Implements the Next.js 16 server-side session authentication boundary:
-1. `src/proxy.ts` (Next.js 16 Proxy convention, formerly middleware.ts):
-   - Integrates `updateSession(request)` to refresh tokens on incoming requests.
-   - Enforces authentication guard: unauthenticated requests to protected paths (`/c/*`, `/projects/*`, `/settings/*`, `/api/*` except public auth endpoints) redirect to `/login` or return `401 Unauthorized`.
-   - Allows public assets (`_next`, static, favicon, `/login`, `/signup`, `/auth/*`) through without redirection.
-2. `src/app/auth/callback/route.ts`:
-   - Next.js Route Handler for handling Supabase OAuth redirects and email verification code exchange (`supabase.auth.exchangeCodeForSession(code)`).
-3. `src/lib/auth/session.ts`:
-   - Helper function `getServerUser()` and `requireAuth()` for Route Handlers and Server Components to safely access verified user context without client spoofing.
-4. Unit tests:
-   - `tests/unit/auth/proxy.test.ts` verifying path matching, redirect rules, and public route passthrough.
+Implements the user-facing authentication screens using the project's design system:
+1. `src/app/login/page.tsx`:
+   - Clean, accessible sign-in form using shadcn/ui components (`Input`, `Button`, `Label`).
+   - Email/password authentication via `supabase.auth.signInWithPassword`.
+   - Respects `next` query parameter after successful sign-in.
+   - Displays clear, user-friendly error banners on invalid credentials or callback errors.
+2. `src/app/signup/page.tsx`:
+   - User registration form with email, password, and display name.
+   - Client and server validation (minimum 8 characters, valid email).
+   - Sign up via `supabase.auth.signUp`.
+   - Clear post-signup confirmation notice (check email for verification link).
+3. Client auth form components and state management:
+   - Loading states and disabled submit buttons during in-flight requests.
+   - Clean navigation links between login and signup screens.
+4. Automated tests:
+   - Unit/component tests verifying validation, error states, and submission callbacks.
 
-### Files That Will Be Created
+### Files That Will Be Created or Modified
 
 ```
-src/proxy.ts
-src/app/auth/callback/route.ts
-src/lib/auth/session.ts
-tests/unit/auth/proxy.test.ts
+src/app/login/page.tsx
+src/app/signup/page.tsx
+src/components/auth/login-form.tsx
+src/components/auth/signup-form.tsx
+tests/unit/auth/login-form.test.tsx
+tests/unit/auth/signup-form.test.tsx
 ```
 
 ### Acceptance Criteria
 
-- [ ] `proxy.ts` exports `proxy` function conforming to Next.js 16 Proxy specification
-- [ ] Protected routes (`/c/:id`, `/settings`, private APIs) reject unauthenticated requests
-- [ ] Public routes (`/login`, `/signup`, `/auth/callback`) remain accessible
-- [ ] Auth callback route properly exchanges code for session
-- [ ] TypeScript strict mode (`npm run type-check`) and all tests pass with 0 errors
+- [ ] `/login` renders clean email/password form with validation
+- [ ] `/signup` renders registration form with display name and password confirmation
+- [ ] Successful login redirects to sanitized `next` parameter or `/`
+- [ ] In-flight submissions display loading spinner and prevent duplicate submissions
+- [ ] Auth errors (bad credentials, user already exists) display accessible inline error messages
+- [ ] TypeScript strict mode (`npm run type-check`), ESLint, and all tests pass with 0 errors
