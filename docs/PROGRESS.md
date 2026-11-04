@@ -24,8 +24,8 @@
 |-------|-------------|--------|-------|
 | 00 | Documentation & Planning | ✅ | Completed 2026-11-04 |
 | 01 | Project Scaffold & Configuration | ✅ | Completed 2026-11-04 (Next.js 16, Tailwind v4, shadcn, Vitest, Playwright, Strict TS) |
-| 02 | Supabase Setup & Database Schema | 🔄 | P02-T01 completed (clients, proxy helper, env validation, types). P02-T02 pending Supabase credentials |
-| 03 | Authentication | ❌ | Blocked: needs Phase 02 |
+| 02 | Supabase Setup & Database Schema | ✅ | Completed 2026-11-04 (All 8 tables, indexes, RLS, storage bucket, triggers verified) |
+| 03 | Authentication | ⏳ | Ready to start (P03-T01 Next.js 16 proxy route guard & auth callback) |
 | 04 | Dashboard Shell & Sidebar | ❌ | Blocked: needs Phase 03 |
 | 05 | API Key Management | ❌ | Blocked: needs Phase 02 & KEY_ENCRYPTION_SECRET |
 | 06 | OpenRouter Model Listing | ❌ | Blocked: needs Phase 05 |
@@ -100,3 +100,19 @@
   - Created `src/lib/supabase/proxy.ts` implementing `updateSession` for Next.js 16 `proxy.ts`.
   - Added unit test suite `tests/unit/supabase/client.test.ts` (10 passing tests).
   - Verified full test suite: 11/11 tests pass, `npm run type-check` passes (0 errors), `npm run lint` passes (0 errors/warnings), `npm run build` compiles cleanly.
+
+### 2026-11-04 — Phase 02: P02-T02 (Database Migrations, Storage & Schema Verification)
+
+**Completed Tasks**:
+- `P02-T02`:
+  - Created `.env.local` configured with verified remote Supabase project `wzvllcifkdfnvnvsqdqr`.
+  - Authoring and organizing SQL migration files:
+    - `supabase/migrations/20261104000001_initial_schema.sql` (8 tables, constraints, foreign keys, 9 indexes).
+    - `supabase/migrations/20261104000002_rls_policies.sql` (Default-deny RLS, ownership rules, table grants).
+    - `supabase/migrations/20261104000003_storage_bucket.sql` (Private `user-uploads` bucket with 20MB limit and storage policies).
+    - `supabase/migrations/20261104000004_triggers.sql` (Auto `profiles` creation on user signup, `updated_at` handlers).
+  - Consolidated single-file migration: `supabase/full_schema.sql`.
+  - Provisioned and verified private `user-uploads` storage bucket with 20MB quota and restricted mime types.
+  - Verified table presence and connectivity on live Supabase instance across all 8 tables.
+  - Added migration unit tests in `tests/unit/supabase/migrations.test.ts` (25 tests).
+  - Complete verification suite: 36/36 tests pass, 0 type errors, 0 lint warnings, production build successful.

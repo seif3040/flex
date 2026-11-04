@@ -6,43 +6,41 @@
 
 ---
 
-## Authorized Next Task: P02-T02 — Database Migrations (Initial Schema, RLS & Storage)
+## Authorized Next Task: P03-T01 — Next.js 16 Proxy Route Guard & Auth Callback
 
-**Phase**: 02 — Supabase Setup & Database Schema  
-**Task ID**: P02-T02  
-**Depends on**: `P02-T01` completed ✅, Supabase credentials in `.env.local`
+**Phase**: 03 — Authentication  
+**Task ID**: P03-T01  
+**Depends on**: Phase 02 completed ✅, Supabase live connection verified ✅
 
 ---
 
 ### What This Task Does
 
-Creates and applies versioned SQL migrations for Supabase PostgreSQL:
-1. `supabase/migrations/20261104000001_initial_schema.sql`:
-   - Tables: `profiles`, `api_keys`, `projects`, `conversations`, `messages`, `files`, `artifacts`, `memory_entries`
-   - Constraints, foreign keys with `ON DELETE CASCADE / SET NULL`, indexes
-2. `supabase/migrations/20261104000002_rls_policies.sql`:
-   - Default-deny RLS enabled on all 8 tables
-   - User ownership policies (`auth.uid() = user_id`) for SELECT, INSERT, UPDATE, DELETE
-   - Joined ownership policies for `messages` and `files`
-3. `supabase/migrations/20261104000003_storage_bucket.sql`:
-   - Create private `user-uploads` bucket in `storage.buckets`
-   - Storage RLS policies restricting read/write to `user-uploads/{auth.uid()}/...`
-4. `supabase/migrations/20261104000004_triggers.sql`:
-   - `handle_new_user()` trigger on `auth.users` insert to automatically create a `profiles` row
+Implements the Next.js 16 server-side session authentication boundary:
+1. `src/proxy.ts` (Next.js 16 Proxy convention, formerly middleware.ts):
+   - Integrates `updateSession(request)` to refresh tokens on incoming requests.
+   - Enforces authentication guard: unauthenticated requests to protected paths (`/c/*`, `/projects/*`, `/settings/*`, `/api/*` except public auth endpoints) redirect to `/login` or return `401 Unauthorized`.
+   - Allows public assets (`_next`, static, favicon, `/login`, `/signup`, `/auth/*`) through without redirection.
+2. `src/app/auth/callback/route.ts`:
+   - Next.js Route Handler for handling Supabase OAuth redirects and email verification code exchange (`supabase.auth.exchangeCodeForSession(code)`).
+3. `src/lib/auth/session.ts`:
+   - Helper function `getServerUser()` and `requireAuth()` for Route Handlers and Server Components to safely access verified user context without client spoofing.
+4. Unit tests:
+   - `tests/unit/auth/proxy.test.ts` verifying path matching, redirect rules, and public route passthrough.
 
----
+### Files That Will Be Created
 
-### Prerequisites / Action Required From User (Blocker)
-
-Create `d:\flex\.env.local` (copied from `.env.local.example`) and supply:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-SUPABASE_SERVICE_ROLE_KEY=eyJ...
+```
+src/proxy.ts
+src/app/auth/callback/route.ts
+src/lib/auth/session.ts
+tests/unit/auth/proxy.test.ts
 ```
 
-And confirm:
-- **Decision Q-001**: Supabase Cloud or Local (Docker)?
-  - If **Supabase Cloud**: provide the project URL and keys above from your Supabase dashboard (Project Settings → API).
-  - If **Local Supabase**: confirm Docker Desktop is running so we can execute `npx supabase start`.
+### Acceptance Criteria
+
+- [ ] `proxy.ts` exports `proxy` function conforming to Next.js 16 Proxy specification
+- [ ] Protected routes (`/c/:id`, `/settings`, private APIs) reject unauthenticated requests
+- [ ] Public routes (`/login`, `/signup`, `/auth/callback`) remain accessible
+- [ ] Auth callback route properly exchanges code for session
+- [ ] TypeScript strict mode (`npm run type-check`) and all tests pass with 0 errors

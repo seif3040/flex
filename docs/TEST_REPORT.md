@@ -12,11 +12,22 @@
 |-------|-----------|-----------|------------|------|-------|
 | 00 (Docs) | N/A | N/A | N/A | N/A | N/A |
 | 01 (Scaffold) | 1/1 passed (smoke) | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
-| 02 (P02-T01) | 11/11 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
+| 02 (Supabase) | 36/36 passed | Scaffolding complete | Pass (0 errors) | Pass (0 errors) | Pass (Turbopack) |
 
 ---
 
 ## Test Run History
+
+### 2026-11-04 — Phase 02 (P02-T02) Migration & Live Connection Verification
+- `npm run test:run`: 36 passed (10 client tests + 25 migration SQL tests + 1 smoke test)
+- `npm run type-check`: Passed (`tsc --noEmit` with zero errors)
+- `npm run lint`: Passed (`eslint` passed with 0 errors and 0 warnings)
+- `npm run build`: Passed (Next.js 16.4.5 Turbopack compilation succeeded with `.env.local` loaded)
+- Live Supabase verification:
+  - Anon API: Connected (`https://wzvllcifkdfnvnvsqdqr.supabase.co`)
+  - Admin API: Verified (`auth.admin.listUsers()`)
+  - 8 Application Tables: Verified present (`profiles`, `api_keys`, `projects`, `conversations`, `messages`, `files`, `artifacts`, `memory_entries`)
+  - Private Storage Bucket: Created and verified (`user-uploads`, public=false, 20MB limit)
 
 ### 2026-11-04 — Phase 02 (P02-T01) Supabase Client Verification
 - `npm run test:run`: 11 passed (1 smoke test + 10 Supabase environment & client tests in `tests/unit/supabase/client.test.ts`)
