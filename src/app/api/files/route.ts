@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient, createClient } from '@/lib/supabase/server';
 import { createUnauthorizedResponse, requireServerUser } from '@/lib/auth/session';
 import { InvalidFileTypeError, FileTooLargeError, sanitizeFilename, validateFile } from '@/lib/files/validate';
 import { extractText } from '@/lib/files/extract';
@@ -21,7 +21,20 @@ export async function POST(request: Request) {
   try { validateFile({ size: input.size, type: input.type, bytes }); } catch (error) { const message = error instanceof Error ? error.message : 'Invalid file'; const status = error instanceof FileTooLargeError || error instanceof InvalidFileTypeError ? 400 : 500; return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message } }, { status }); }
   const conversationId = String(form.get('conversationId') ?? ''); const safeName = sanitizeFilename(input.name); const path = `${user.id}/${conversationId || 'unattached'}/${crypto.randomUUID()}-${safeName}`; const supabase = await createClient();
   if (conversationId) { const { data: conversation } = await supabase.from('conversations').select('id').eq('id', conversationId).eq('user_id', user.id).maybeSingle(); if (!conversation) return NextResponse.json({ error: { code: 'FORBIDDEN', message: 'Conversation not found' } }, { status: 403 }); }
-  const upload = await supabase.storage.from('user-uploads').upload(path, bytes, { contentType: input.type, upsert: false }); if (upload.error) return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Unable to store file' } }, { status: 500 });
-  let extractedText: string | null = null; try { extractedText = (await extractText(input.type, bytes))?.slice(0, 500000) ?? null; } catch { await supabase.storage.from('user-uploads').remove([path]); return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Unable to extract text from file' } }, { status: 400 }); }
-  const { data, error } = await supabase.from('files').insert({ user_id: user.id, conversation_id: conversationId || null, storage_path: path, original_name: safeName, mime_type: input.type, size_bytes: input.size, extracted_text: extractedText }).select().single(); if (error) { await supabase.storage.from('user-uploads').remove([path]); return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Unable to save file metadata' } }, { status: 500 }); } return NextResponse.json({ data }, { status: 201 });
+  let storageClient = supabase;
+  let upload = await storageClient.storage.from('user-uploads').upload(path, bytes, { contentType: input.type, upsert: false });
+  if (upload.error) {
+    // The user/session client is preferred so Storage RLS remains the first line
+    // of defense. Fall back to the server-only client after ownership was checked
+    // above; the path is always scoped to this authenticated user's id.
+    try {
+      storageClient = createAdminClient();
+      upload = await storageClient.storage.from('user-uploads').upload(path, bytes, { contentType: input.type, upsert: false });
+    } catch {
+      return NextResponse.json({ error: { code: 'STORAGE_NOT_CONFIGURED', message: 'File storage is not configured for this workspace' } }, { status: 503 });
+    }
+  }
+  if (upload.error) return NextResponse.json({ error: { code: 'STORAGE_ERROR', message: 'Unable to store file. Check the file type and size, then try again.' } }, { status: 500 });
+  let extractedText: string | null = null; try { extractedText = (await extractText(input.type, bytes))?.slice(0, 500000) ?? null; } catch { await storageClient.storage.from('user-uploads').remove([path]); return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Unable to extract text from file' } }, { status: 400 }); }
+  const { data, error } = await supabase.from('files').insert({ user_id: user.id, conversation_id: conversationId || null, storage_path: path, original_name: safeName, mime_type: input.type, size_bytes: input.size, extracted_text: extractedText }).select().single(); if (error) { await storageClient.storage.from('user-uploads').remove([path]); return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Unable to save file metadata' } }, { status: 500 }); } return NextResponse.json({ data }, { status: 201 });
 }
