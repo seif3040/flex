@@ -4,7 +4,7 @@ import type { NormalizedModel } from '@/lib/openrouter/types';
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 
-export function ModelSelector({ models, value, onChange, disabled }: { models: NormalizedModel[]; value: string; onChange: (value: string) => void; disabled?: boolean }) {
+export function ModelSelector({ models, value, onChange, disabled, className }: { models: NormalizedModel[]; value: string; onChange: (value: string) => void; disabled?: boolean; className?: string }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const search = query.trim().toLowerCase();
@@ -14,7 +14,7 @@ export function ModelSelector({ models, value, onChange, disabled }: { models: N
   const results = [auto, ...choices].filter((model) => `${model.name} ${model.id}`.toLowerCase().includes(search));
   return (
     <Dialog open={open} onOpenChange={(next) => { setOpen(next); if (!next) setQuery(''); }}>
-      <DialogTrigger disabled={disabled} className="min-w-0 flex-1 truncate rounded-lg border bg-card px-3 py-2 text-start text-sm" aria-label={`Model: ${selected}`}>
+      <DialogTrigger disabled={disabled} className={`min-w-0 truncate rounded-xl border bg-background px-2.5 py-1.5 text-start text-xs transition-colors hover:bg-muted ${className ?? ''}`} aria-label={`Model: ${selected}`}>
         {selected}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
