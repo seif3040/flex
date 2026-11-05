@@ -145,7 +145,7 @@ export function SignupForm() {
               <CheckCircle2 className="size-4 text-primary shrink-0" />
               What to do next:
             </div>
-            <p>1. Open the email message from AI Workspace.</p>
+            <p>1. Open the email message from flex.</p>
             <p>2. Click the confirmation link to verify your account.</p>
             <p>3. You will be automatically redirected to your workspace.</p>
           </div>

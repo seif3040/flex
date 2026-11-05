@@ -1,5 +1,16 @@
 # AI Workspace — Test Report
 
+## Current continuation verification (2026-11-04)
+
+- Full Vitest suite: **120/120 passed** across 18 files.
+- Live Supabase suite: **9/9 passed** against `wzvllcifkdfnvnvsqdqr`.
+- TypeScript, ESLint, Next.js production build, and Playwright E2E (2/2): **PASS**.
+- Unified local gate `npm run verify`: **PASS**.
+- `npm audit --audit-level=high`: **PASS** with 0 high/critical vulnerabilities; 19 moderate and 2 low findings remain in development/tooling dependencies.
+- Newly verified foundations: dashboard/theme, encrypted key storage, OpenRouter models, conversation CRUD/chat SSE, sidebar search, message editing, regeneration branches without duplicate user messages, project selector with ownership validation and system-prompt injection, memory UI and injection, secure file upload with text/PDF extraction and ownership-linked attachments, artifact listing/versioning/editor, voice dictation and local read-aloud controls, OpenRouter web search wiring, and in-memory API rate limits.
+- File contents are intentionally not forwarded to OpenRouter until the user explicitly approves that external data flow; attachment metadata is linked safely to messages.
+- Remaining: configure `KEY_ENCRYPTION_SECRET`, perform a live OpenRouter smoke test with a user key, and link/deploy the project to Vercel. A manual, test-gated workflow is now present at `.github/workflows/deploy-vercel.yml`.
+
 **Version**: 1.0.0  
 **Date**: 2026-11-04  
 **Last Updated**: 2026-11-04

@@ -29,6 +29,23 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Deployment readiness
+
+The project builds successfully with Next.js 16. Run `npm run verify` for the complete local gate (type-check, lint, all tests, and production build). CI repeats these checks in `.github/workflows/ci.yml`.
+
+`.github/workflows/deploy-vercel.yml` provides a manual, test-gated deployment workflow. Configure `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` as repository variables, and `VERCEL_TOKEN` as a protected `production` environment secret before running it. The workflow does not deploy automatically.
+
+Configure these server-side variables in the deployment platform:
+
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `KEY_ENCRYPTION_SECRET` (64 hex characters; never expose it to the browser)
+
+Users provide their own OpenRouter key through Settings; it is encrypted before storage. Web search uses OpenRouter's `openrouter:web_search` server tool and may incur provider charges.
+
+No Vercel project is linked in this checkout, so deployment itself has not been claimed or performed.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

@@ -1,0 +1,9 @@
+'use client';
+
+import { useRef, useState, useSyncExternalStore } from 'react';
+import { createSpeechRecognition, isSpeechRecognitionSupported, type SpeechRecognitionLike } from '@/lib/voice/speech-recognition';
+
+const subscribe = () => () => undefined;
+const unsupportedOnServer = () => false;
+
+export function useVoice(onFinalText: (text: string) => void) { const recognition = useRef<SpeechRecognitionLike | null>(null); const [isListening, setIsListening] = useState(false); const [error, setError] = useState<string | null>(null); const [interimText, setInterimText] = useState(''); const supported = useSyncExternalStore(subscribe, isSpeechRecognitionSupported, unsupportedOnServer); const start = () => { setError(null); const next = createSpeechRecognition(); if (!next) return; recognition.current = next; next.lang = 'ar-EG'; next.interimResults = true; next.continuous = false; next.onresult = (event) => { const result = event as { results?: ArrayLike<{ isFinal: boolean; 0: { transcript: string } }> }; let interim = ''; for (let index = 0; index < (result.results?.length ?? 0); index += 1) { const item = result.results?.[index]; if (!item) continue; if (item.isFinal) onFinalText(item[0].transcript); else interim += item[0].transcript; } setInterimText(interim); }; next.onend = () => { setIsListening(false); setInterimText(''); }; next.onerror = (event) => { const { error: code } = event as { error?: string }; setError(code === 'not-allowed' || code === 'service-not-allowed' ? 'Microphone access was blocked. Check your browser permissions.' : 'Voice dictation failed. Try again or type your message.'); setIsListening(false); setInterimText(''); }; try { next.start(); setIsListening(true); } catch { setError('Could not start voice dictation.'); setIsListening(false); setInterimText(''); } }; const stop = () => recognition.current?.stop(); return { supported, isListening, interimText, error, start, stop }; }

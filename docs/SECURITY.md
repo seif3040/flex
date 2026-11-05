@@ -77,7 +77,7 @@ Implementation: In-memory rate limiter in Phase 1; upgrade to Redis/Upstash in p
 - **Allowed types**: PDF, plain text, Markdown, PNG, JPEG, WebP, GIF.
 - **Storage**: Files stored in private Supabase Storage bucket with path `user-uploads/{user_id}/{...}`.
 - **Path traversal**: Supabase Storage handles isolation. Upload paths are constructed server-side, never from raw user input.
-- **Extracted text**: Sanitized before inclusion in AI context.
+- **Extracted text**: Sanitized and stored server-side. It is not forwarded to an AI provider by default; any future document-analysis flow must require explicit user consent and clearly identify the external destination.
 
 ---
 

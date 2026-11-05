@@ -1,0 +1,3 @@
+export type DetectedArtifact = { language: string; content: string; title: string };
+const worthy = new Set(['tsx', 'jsx', 'ts', 'js', 'html', 'css', 'python', 'py', 'sql', 'json']);
+export function detectArtifacts(text: string): DetectedArtifact[] { const result: DetectedArtifact[] = []; const pattern = /```([\w+-]*)\s*\n([\s\S]*?)```/g; let match; while ((match = pattern.exec(text))) { const language = match[1] || 'text'; const content = (match[2] ?? '').trimEnd(); if (content.split('\n').length >= 20 || worthy.has(language.toLowerCase())) result.push({ language, content, title: `${language || 'text'} artifact` }); } return result; }

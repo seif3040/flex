@@ -1,0 +1,7 @@
+import { NextResponse } from 'next/server';
+import { projectSchema } from '@/schemas/project';
+import { createClient } from '@/lib/supabase/server';
+import { createUnauthorizedResponse, requireServerUser } from '@/lib/auth/session';
+
+export async function GET() { let user; try { user = await requireServerUser(); } catch { return createUnauthorizedResponse(); } const supabase = await createClient(); const { data, error } = await supabase.from('projects').select('*').eq('user_id', user.id).order('updated_at', { ascending: false }); if (error) return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Unable to list projects' } }, { status: 500 }); return NextResponse.json({ data: { projects: data } }); }
+export async function POST(request: Request) { let user; try { user = await requireServerUser(); } catch { return createUnauthorizedResponse(); } const parsed = projectSchema.safeParse(await request.json().catch(() => null)); if (!parsed.success) return NextResponse.json({ error: { code: 'VALIDATION_ERROR', message: 'Invalid project' } }, { status: 400 }); const input = parsed.data; const supabase = await createClient(); const { data, error } = await supabase.from('projects').insert({ user_id: user.id, name: input.name, description: input.description, system_prompt: input.systemPrompt }).select().single(); if (error) return NextResponse.json({ error: { code: 'INTERNAL_ERROR', message: 'Unable to create project' } }, { status: 500 }); return NextResponse.json({ data }, { status: 201 }); }

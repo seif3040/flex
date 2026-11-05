@@ -1,0 +1,1 @@
+export type NormalizedModel = { id: string; name: string; contextWindow: number; pricing: { prompt: string; completion: string }; isFree: boolean; supportsVision: boolean; supportsTools: boolean; description: string };

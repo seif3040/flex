@@ -24,25 +24,25 @@
 |-------|-------------|--------|-------|
 | 00 | Documentation & Planning | ✅ | Completed 2026-11-04 |
 | 01 | Project Scaffold & Configuration | ✅ | Completed 2026-11-04 (Next.js 16, Tailwind v4, shadcn, Vitest, Playwright, Strict TS) |
-| 02 | Supabase Setup & Database Schema | ⚠️ | Partial — Schema files authored & bucket verified, but SQL migration pending execution in Supabase SQL Editor |
-| 03 | Authentication | ⚠️ | Code complete & Auth API verified live, but Database RLS test BLOCKED by pending SQL migration |
-| 04 | Dashboard Shell & Sidebar | ❌ | Blocked: Apply supabase/full_schema.sql in Supabase Dashboard first |
-| 05 | API Key Management | ❌ | Blocked: needs Phase 04 & KEY_ENCRYPTION_SECRET |
-| 06 | OpenRouter Model Listing | ❌ | Blocked: needs Phase 05 |
-| 07 | Core Chat (New Conv + Streaming) | ❌ | Blocked: needs Phase 06 |
-| 08 | Conversation History | ❌ | Blocked: needs Phase 07 |
-| 09 | Message Editing & Regeneration | ⏳ | |
-| 10 | File Uploads & Document Analysis | ⏳ | |
-| 11 | Artifacts | ⏳ | |
-| 12 | Voice Phase A | ⏳ | |
-| 13 | Web Search with Citations | ⏳ | |
-| 14 | Projects | ⏳ | |
-| 15 | User Memory | ⏳ | |
+| 02 | Supabase Setup & Database Schema | ✅ | Live verification passed: tables, RLS, storage, and trigger checks |
+| 03 | Authentication | ✅ | Auth and database integration checks pass; logout is POST-only |
+| 04 | Dashboard Shell & Sidebar | ✅ | Protected layout, responsive navigation, theme, home, settings, and chat shell implemented |
+| 05 | API Key Management | ⚠️ | AES-256-GCM routes/UI implemented; server secret must be configured |
+| 06 | OpenRouter Model Listing | ✅ | Cached route and selector expose only zero-cost/free models; server blocks paid model IDs |
+| 07 | Core Chat (New Conv + Streaming) | ✅ | Conversation creation, SSE persistence, composer, Markdown, stop, and model selection implemented |
+| 08 | Conversation History | ✅ | Conversation CRUD and sidebar history UI implemented |
+| 09 | Message Editing & Regeneration | ⚠️ | Editing and regeneration branches implemented without duplicate user messages; full branch navigation graph remains future hardening |
+| 10 | File Uploads & Document Analysis | ⚠️ | Secure upload, validation, text/PDF extraction, image handling, and message-linked attachments implemented; provider forwarding awaits privacy approval |
+| 11 | Artifacts | ✅ | Detection, persistence, conversation listing, version save, editor, and sandboxed preview implemented |
+| 12 | Voice Phase A | ✅ | Browser dictation (Arabic locale with fallback messaging) and local speech synthesis/read-aloud controls implemented |
+| 13 | Web Search with Citations | ⚠️ | OpenRouter web-search wiring implemented; live provider smoke test pending |
+| 14 | Projects | ✅ | Project CRUD, chat project selector, ownership validation, and system-prompt injection implemented |
+| 15 | User Memory | ✅ | Memory CRUD and optional chat injection implemented |
 | 16 | Voice Phase B | ⏳ | |
 | 17 | Conversation Branching | ⏳ | |
-| 18 | Hardening | ⏳ | |
-| 19 | Testing | ⏳ | |
-| 20 | Polish | ⏳ | |
+| 18 | Hardening | ✅ | Security checks, API guards, upload validation, in-memory rate limits, and audit verification completed |
+| 19 | Testing | ✅ | 120 unit/integration tests, 9 live Supabase checks, and 2 E2E tests pass |
+| 20 | Polish | 🔄 | Geist typography, mobile navigation/layout, free-only model UX, and manual Vercel workflow added; project linkage and provider smoke tests remain |
 
 ---
 
@@ -50,10 +50,10 @@
 
 | Blocker | Needed For | Resolution |
 |---------|-----------|------------|
-| Run `supabase/full_schema.sql` in Supabase SQL Editor | Database Tables & RLS | Paste contents of `supabase/full_schema.sql` into remote project `wzvllcifkdfnvnvsqdqr` SQL Editor and run |
+| `KEY_ENCRYPTION_SECRET` env var | API key and chat routes | Configure a 64-character hex secret server-side; never expose it client-side |
 | `KEY_ENCRYPTION_SECRET` env var | Phase 05 | Generate with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
 | Personal OpenRouter API key (for testing) | Phase 06 (dev test) | Enter through app Settings UI after Phase 05 |
-| Web search provider decision | Phase 13 | See OPEN_QUESTIONS.md Q-003 |
+| Web search provider decision | Phase 13 | OpenRouter web search wiring selected; live key smoke test remains |
 
 ---
 

@@ -51,19 +51,13 @@ describe('Logout Functionality (Route & Client)', () => {
   });
 
   describe('GET /api/auth/logout', () => {
-    it('signs out user and redirects to /login with 303 See Other', async () => {
-      serverSignOutMock.mockResolvedValue({ error: null });
-
-      const req = new NextRequest('http://localhost:3000/api/auth/logout', {
-        method: 'GET',
-      });
-
-      const res = await GET(req);
-      expect(serverSignOutMock).toHaveBeenCalled();
-      expect(res.status).toBe(303);
-
-      const location = new URL(res.headers.get('location')!);
-      expect(location.pathname).toBe('/login');
+    it('rejects GET with 405 Method Not Allowed to prevent CSRF logout attacks', async () => {
+      const res = await GET();
+      expect(serverSignOutMock).not.toHaveBeenCalled();
+      expect(res.status).toBe(405);
+      expect(res.headers.get('Allow')).toBe('POST');
+      const json = await res.json();
+      expect(json.error.code).toBe('METHOD_NOT_ALLOWED');
     });
   });
 

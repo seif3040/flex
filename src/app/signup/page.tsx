@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import { SignupForm } from '@/components/auth/signup-form';
 
 export const metadata: Metadata = {
-  title: 'Create an account — AI Workspace',
+  title: 'Create an account — flex',
   description: 'Create your account to start chatting with state-of-the-art AI models.',
 };
 
@@ -20,7 +20,7 @@ export default function SignupPage() {
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
             <Sparkles className="size-5" />
           </div>
-          <span className="text-xl font-bold tracking-tight">AI Workspace</span>
+          <span className="text-xl font-bold tracking-tight">flex</span>
         </Link>
 
         <React.Suspense

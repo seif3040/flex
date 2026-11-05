@@ -5,7 +5,7 @@ import { Sparkles } from 'lucide-react';
 import { LoginForm } from '@/components/auth/login-form';
 
 export const metadata: Metadata = {
-  title: 'Sign in — AI Workspace',
+  title: 'Sign in — flex',
   description: 'Sign in to access your private AI workspace and conversations.',
 };
 
@@ -20,7 +20,7 @@ export default function LoginPage() {
           <div className="flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground shadow-xs">
             <Sparkles className="size-5" />
           </div>
-          <span className="text-xl font-bold tracking-tight">AI Workspace</span>
+          <span className="text-xl font-bold tracking-tight">flex</span>
         </Link>
 
         <React.Suspense
