@@ -1,7 +1,15 @@
 'use client';
 
-import { Monitor, Moon, Sun } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { useTheme } from '@/components/providers/ThemeProvider';
+import { Palette } from 'lucide-react';
+import { useTheme, type Theme } from '@/components/providers/ThemeProvider';
 
-export function ThemeToggle() { const { theme, setTheme } = useTheme(); const next = theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'; const Icon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Monitor; return <Button variant="ghost" size="icon" onClick={() => setTheme(next)} aria-label={`Switch to ${next} theme`}><Icon className="size-4" /></Button>; }
+const themes: Array<{ value: Theme; label: string }> = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'lavender', label: 'Lavender' },
+  { value: 'forest', label: 'Forest' },
+  { value: 'midnight', label: 'Midnight' },
+];
+
+export function ThemeToggle() { const { theme, setTheme } = useTheme(); return <label className="flex items-center gap-1.5 rounded-lg border bg-card px-2 py-1.5 text-xs text-muted-foreground" title="Choose appearance"><Palette className="size-3.5" /><span className="sr-only">Appearance</span><select aria-label="Appearance" className="max-w-24 bg-transparent text-xs text-foreground outline-none" value={theme} onChange={(event) => setTheme(event.target.value as Theme)}>{themes.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>; }

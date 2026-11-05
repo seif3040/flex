@@ -17,7 +17,7 @@ export default function SettingsPage() {
         <section id="appearance" className="flex scroll-mt-20 items-center justify-between gap-4 rounded-2xl border bg-card p-5">
           <div>
             <h2 className="font-medium">Appearance</h2>
-            <p className="mt-1 text-sm text-muted-foreground">Switch between light, dark, and system themes.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Choose Light, Dark, System, Lavender, Forest, or Midnight. Your choice is saved.</p>
           </div>
           <ThemeToggle />
         </section>
