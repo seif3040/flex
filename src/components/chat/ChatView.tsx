@@ -11,6 +11,7 @@ import { ArtifactList } from '@/components/artifact/ArtifactList';
 import { WELCOME_DRAFT_KEY } from '@/components/chat/WelcomePrompt';
 
 const FREE_ROUTER = 'openrouter/free';
+const MODEL_STORAGE_KEY = 'ai-workspace.default-model';
 
 export function ChatView({ conversationId, title, initialModel, initialProjectId, initialMessages }: { conversationId: string; title: string; initialModel: string; initialProjectId?: string | null; initialMessages: ChatMessage[] }) {
   const [activeId, setActiveId] = useState(conversationId);
@@ -77,6 +78,18 @@ export function ChatView({ conversationId, title, initialModel, initialProjectId
     if (activeId) void fetch(`/api/conversations/${activeId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ projectId: value || null }) });
   };
 
+  const selectModel = (value: string) => {
+    setModel(value);
+    try {
+      window.localStorage.setItem(MODEL_STORAGE_KEY, value);
+    } catch {
+      // The conversation still works when browser storage is unavailable.
+    }
+    if (activeId) {
+      void fetch(`/api/conversations/${activeId}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ modelId: value }) });
+    }
+  };
+
   return <div className="mx-auto flex h-[calc(100dvh-4rem)] w-full max-w-6xl flex-col md:h-dvh">
     <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 border-b px-4 py-4 sm:px-8">
       <div className="space-y-2">
@@ -85,7 +98,7 @@ export function ChatView({ conversationId, title, initialModel, initialProjectId
       </div>
       <div className="flex w-full min-w-0 items-center gap-2 sm:w-auto sm:max-w-[60%]">
         <select aria-label="Project" value={projectId} onChange={(event) => selectProject(event.target.value)} disabled={!activeId || chat.isStreaming} className="h-9 min-w-0 max-w-[42%] truncate rounded-md border bg-background px-2 text-xs sm:max-w-48 sm:text-sm"><option value="">No project</option>{projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}</select>
-        <ModelSelector models={models} value={model} onChange={setModel} disabled={loading || chat.isStreaming || !activeId} />
+        <ModelSelector models={models} value={model} onChange={selectModel} disabled={loading || chat.isStreaming || !activeId} />
       </div>
     </header>
     {(chat.error || modelError) && <div role="alert" className="border-b bg-destructive/10 px-3 py-3 text-sm text-destructive sm:px-6">{chat.error ?? modelError}</div>}
